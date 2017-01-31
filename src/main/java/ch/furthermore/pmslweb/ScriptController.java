@@ -8,8 +8,6 @@ import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,36 +18,24 @@ import ch.furthermore.pmsl.BuiltIn;
 import ch.furthermore.pmsl.ScriptFunction;
 
 /**
- * Build Samples:
- * <pre>
- * mvn package docker:build
- * docker push dockerchtz/pmsl-web:latest
- * </pre>
- * 
- * Run Samples:
- * <pre>
- * docker run -p 8080:8080 -d dockerchtz/pmsl-web
- * </pre>
- * 
  * Invoke Samples:
  * </pre>
- * curl -s -d 'def foo() ret "hallo" end' -H"Content-Type:text/plain" http://localhost:8080/ 
+ * curl -s -d 'def foo() ret "hallo" end' -H"Content-Type:text/plain" http://localhost:8080/script
  * </pre>
  */
 @Controller
-@EnableAutoConfiguration
 public class ScriptController {
 	@Autowired
 	private HttpServletRequest request;
 	
-	@RequestMapping(path="/",produces="text/plain")
+	@RequestMapping(path="/script",produces="text/plain")
 	@ResponseBody
 	String home() throws NoSuchMethodException, IOException, ScriptException {
-		String sample = "curl -s -d 'def foo() ret \"hallo\" + getParam(\"x\") end' -H'Content-Type:text/plain' http://<host>:<post>/".replaceAll("\"", "\\\\\"");
+		String sample = "curl -s -d 'def foo() ret \"hallo\" + getParam(\"x\") end' -H'Content-Type:text/plain' http://<host>:<post>/script?x=+welt".replaceAll("\"", "\\\\\"");
 		return executeScript("def hello() ret \"" + sample + "\" end");
 	}
 	
-	@RequestMapping(path="/",consumes="text/plain",produces="text/plain",method=RequestMethod.POST)
+	@RequestMapping(path="/script",consumes="text/plain",produces="text/plain",method=RequestMethod.POST)
 	@ResponseBody
 	String executeScript(@RequestBody String script) {
 		try {
@@ -74,9 +60,5 @@ public class ScriptController {
 		public String getParam(String name) {
 			return request.getParameter(name);
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(ScriptController.class, args);
 	}
 }
