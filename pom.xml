@@ -11,7 +11,7 @@
 	</parent>
 	<properties>
 		<java.version>1.7</java.version>
-		<docker.image.prefix>chtzdc</docker.image.prefix>
+		<docker.image.prefix>dockerchtz</docker.image.prefix>
 	</properties>
 	<dependencies>
 		<dependency>

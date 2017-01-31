@@ -17,13 +17,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import ch.furthermore.pmsl.ScriptFunction;
 
 /**
- * Build & Run Samples
+ * Build Samples:
  * <pre>
  * mvn package docker:build
- * docker run -p 8080:8080 -t chtzdc/pmsl-web
+ * docker push dockerchtz/pmsl-web:latest
  * </pre>
  * 
- * Invoke Samples
+ * Run Samples:
+ * <pre>
+ * docker run -p 8080:8080 -t dockerchtz/pmsl-web
+ * </pre>
+ * 
+ * Invoke Samples:
  * </pre>
  * curl -s -d 'def foo() ret "hallo" end' -H"Content-Type:text/plain" http://localhost:8080/ 
  * </pre>
