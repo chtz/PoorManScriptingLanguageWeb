@@ -1,6 +1,6 @@
 # PoorManScriptingLanguageWeb
 
-A stateless workflow engine ;-)
+A STATELESS workflow engine ;-)
 
 Pre-alpha - use at your own risk...
 
@@ -78,7 +78,7 @@ curl -s -d '{"workflow":"workflow foo state node1 leave x=111 end transition to 
 }
 ```
 
-## Signal Workflow Instance
+## Signal Workflow Instance (again)
 
 ### Command
 
