@@ -25,7 +25,7 @@ import ch.furthermore.pmsl.ScriptFunction;
  * 
  * Run Samples:
  * <pre>
- * docker run -p 8080:8080 -t dockerchtz/pmsl-web
+ * docker run -p 8080:8080 -d dockerchtz/pmsl-web
  * </pre>
  * 
  * Invoke Samples:
