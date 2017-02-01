@@ -6,7 +6,7 @@ Pre-alpha - use at your own risk...
 
 ## Sample
 
-```
+```bash
 echo Sample Workflow:
 cat forkjointest.pmsl	
 ```
