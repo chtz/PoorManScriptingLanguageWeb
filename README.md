@@ -6,10 +6,11 @@ Pre-alpha - use at your own risk...
 
 ## Sample
 
-```bash
-echo Sample Workflow:
+Cmd:
+```
 cat forkjointest.pmsl	
 ```
+Result:
 ```
 workflow forkjointest
 	node start
