@@ -1,8 +1,10 @@
 # PoorManScriptingLanguageWeb
 
-A STATELESS workflow engine ;-)
+A STATELESS workflow engine (i.e. client is responsible for storing workflow instance state).
 
-Pre-alpha - use at your own risk...
+This is pre-alpha stuff - use it at your own risk.
+
+Pre-Cond: https://github.com/chtz/PoorManScriptingLanguage "maven installed locally".
 
 ## Sample
 
