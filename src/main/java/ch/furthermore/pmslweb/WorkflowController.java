@@ -1,11 +1,13 @@
 package ch.furthermore.pmslweb;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +18,6 @@ import ch.furthermore.pmsl.Scanner;
 import ch.furthermore.pmsl.wf.SerializedToken;
 import ch.furthermore.pmsl.wf.Token;
 import ch.furthermore.pmsl.wf.WFWorkflow;
-import ch.furthermore.pmslweb.ScriptController.SimpleRequest;
 
 /**
  * Sample interaction
@@ -41,61 +42,54 @@ public class WorkflowController {
 	
 	@RequestMapping(path="/workflow",consumes="text/plain",produces="application/json",method=RequestMethod.POST)
 	@ResponseBody
-	Workflow startWorkflow(@RequestBody String workflow) {
+	WorkflowInstance startWorkflow(@RequestBody String workflowText) {
 		try {
-			Parser p = new Parser(new Scanner(new StringReader(workflow)));
-			WFWorkflow wf = p.wfWorkflow();
-			Token t = new Token(wf, new SimpleRequest(request));
+			WFWorkflow wf = workflow(workflowText);
+			
+			Token t = new Token(wf, new RequestBuiltIns(request));
 			t.signal();
 			
-			return new Workflow(workflow, new SerializedToken(t));
+			return new WorkflowInstance(workflowText, new SerializedToken(t));
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@RequestMapping(path="/instance",consumes="application/json",produces="application/json",method=RequestMethod.POST)
 	@ResponseBody
-	Workflow signalWorkflow(@RequestBody Workflow workflow) {
+	WorkflowInstance signalWorkflowRootToken(@RequestBody WorkflowInstance workflow) {
 		try {
-			Parser p = new Parser(new Scanner(new StringReader(workflow.getWorkflow())));
-			WFWorkflow wf = p.wfWorkflow();
-			Token t = workflow.getToken().token(wf, new SimpleRequest(request));
+			WFWorkflow wf = workflow(workflow.getWorkflow());
+			
+			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
 			t.signal();
 			
-			return new Workflow(workflow.getWorkflow(), new SerializedToken(t));
+			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public static class Workflow {
-		private String workflow;
-		private SerializedToken token;
-		
-		public Workflow() {}
-		
-		public Workflow(String workflow, SerializedToken token) {
-			this.workflow = workflow;
-			this.token = token;
+	@RequestMapping(path="/instance/{tokenId}",consumes="application/json",produces="application/json",method=RequestMethod.POST)
+	@ResponseBody
+	WorkflowInstance signalWorkflowToken(@RequestBody WorkflowInstance workflow, @PathVariable("tokenId") String tokenId) {
+		try {
+			WFWorkflow wf = workflow(workflow.getWorkflow());
+			
+			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
+			t.findById(tokenId).signal();
+			
+			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
-
-		public String getWorkflow() {
-			return workflow;
+		catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		
-		public void setWorkflow(String workflow) {
-			this.workflow = workflow;
-		}
-		
-		public SerializedToken getToken() {
-			return token;
-		}
-		
-		public void setToken(SerializedToken token) {
-			this.token = token;
-		}
+	}
+	
+	private WFWorkflow workflow(String workflowText) throws IOException {
+		Parser p = new Parser(new Scanner(new StringReader(workflowText)));
+		return p.wfWorkflow();
 	}
 }

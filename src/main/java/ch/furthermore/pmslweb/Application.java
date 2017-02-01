@@ -1,7 +1,14 @@
 package ch.furthermore.pmslweb;
 
+import java.io.IOException;
+
+import javax.script.ScriptException;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Build Samples:
@@ -16,7 +23,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * </pre>
  */
 @SpringBootApplication
+@Controller
 public class Application {
+	@RequestMapping("/")
+	@ResponseBody
+	String home() throws NoSuchMethodException, IOException, ScriptException {
+		return "nothing to see here";
+	}
+	
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Application.class, args);
 	}
