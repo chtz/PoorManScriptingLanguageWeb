@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import ch.furthermore.pmsl.Parser;
@@ -42,12 +43,15 @@ public class WorkflowController {
 	
 	@RequestMapping(path="/workflow",consumes="text/plain",produces="application/json",method=RequestMethod.POST)
 	@ResponseBody
-	WorkflowInstance startWorkflow(@RequestBody String workflowText) {
+	WorkflowInstance startWorkflow(@RequestBody String workflowText, @RequestParam(name="autoStart", required=false) String autoStart) {
 		try {
 			WFWorkflow wf = workflow(workflowText);
 			
 			Token t = new Token(wf, new RequestBuiltIns(request));
-			t.signal();
+			
+			if (autoStart == null || !"false".equals(autoStart)) {
+				t.signal();
+			}
 			
 			return new WorkflowInstance(workflowText, new SerializedToken(t));
 		}
@@ -55,7 +59,7 @@ public class WorkflowController {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@RequestMapping(path="/instance",consumes="application/json",produces="application/json",method=RequestMethod.POST)
 	@ResponseBody
 	WorkflowInstance signalWorkflowRootToken(@RequestBody WorkflowInstance workflow) {
