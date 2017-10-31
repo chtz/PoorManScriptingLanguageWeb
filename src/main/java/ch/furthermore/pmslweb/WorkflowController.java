@@ -70,15 +70,18 @@ public class WorkflowController {
 	@ResponseBody
 	WorkflowInstance signalWorkflowRootToken(@RequestBody WorkflowInstance workflow) {
 		try {
+			log.info("signalling root. wf={}, tvars={}", workflow.getWorkflow(), workflow.getToken().getVars());
+			
 			WFWorkflow wf = workflow(workflow.getWorkflow());
 			
 			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
 			t.signal();
 			
+			
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
-			log.warn("signal root error", e); //FIXME debug log
+			log.warn("signal root error. wf={}, tvars={}", workflow.getWorkflow(), workflow.getToken().getVars(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -87,6 +90,8 @@ public class WorkflowController {
 	@ResponseBody
 	WorkflowInstance signalWorkflowToken(@RequestBody WorkflowInstance workflow, @PathVariable("tokenId") String tokenId) {
 		try {
+			log.info("signalling. wf={}, tvars={}, tid={}", workflow.getWorkflow(), workflow.getToken().getVars(), tokenId);
+			
 			WFWorkflow wf = workflow(workflow.getWorkflow());
 			
 			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
