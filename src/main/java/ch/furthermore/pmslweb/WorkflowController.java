@@ -20,6 +20,9 @@ import ch.furthermore.pmsl.wf.SerializedToken;
 import ch.furthermore.pmsl.wf.Token;
 import ch.furthermore.pmsl.wf.WFWorkflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Sample interaction
  * <pre>
@@ -38,6 +41,8 @@ import ch.furthermore.pmsl.wf.WFWorkflow;
  */
 @Controller
 public class WorkflowController {
+	private final static Logger log = LoggerFactory.getLogger(WorkflowController.class);
+	
 	@Autowired
 	private HttpServletRequest request;
 	
@@ -56,6 +61,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflowText, new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("start error", e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
@@ -72,6 +78,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("signal root error", e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
@@ -88,6 +95,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("signal error", e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
