@@ -95,7 +95,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
-			log.warn("signal error. wf={}, t={}", workflow.getWorkflow(), tokenId, e); //FIXME debug log
+			log.warn("signal error. wf={}, tvars={}, tid={}", workflow.getWorkflow(), workflow.getToken().getVars(), tokenId, e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
