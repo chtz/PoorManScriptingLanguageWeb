@@ -20,6 +20,9 @@ import ch.furthermore.pmsl.wf.SerializedToken;
 import ch.furthermore.pmsl.wf.Token;
 import ch.furthermore.pmsl.wf.WFWorkflow;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Sample interaction
  * <pre>
@@ -38,6 +41,8 @@ import ch.furthermore.pmsl.wf.WFWorkflow;
  */
 @Controller
 public class WorkflowController {
+	private final static Logger log = LoggerFactory.getLogger(WorkflowController.class);
+	
 	@Autowired
 	private HttpServletRequest request;
 	
@@ -56,6 +61,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflowText, new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("start error", e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
@@ -64,14 +70,18 @@ public class WorkflowController {
 	@ResponseBody
 	WorkflowInstance signalWorkflowRootToken(@RequestBody WorkflowInstance workflow) {
 		try {
+			log.info("signalling root. wf={}, tvars={}", workflow.getWorkflow(), workflow.getToken().getVars());
+			
 			WFWorkflow wf = workflow(workflow.getWorkflow());
 			
 			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
 			t.signal();
 			
+			
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("signal root error. wf={}, tvars={}", workflow.getWorkflow(), workflow.getToken().getVars(), e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -80,6 +90,8 @@ public class WorkflowController {
 	@ResponseBody
 	WorkflowInstance signalWorkflowToken(@RequestBody WorkflowInstance workflow, @PathVariable("tokenId") String tokenId) {
 		try {
+			log.info("signalling. wf={}, tvars={}, tid={}", workflow.getWorkflow(), workflow.getToken().getVars(), tokenId);
+			
 			WFWorkflow wf = workflow(workflow.getWorkflow());
 			
 			Token t = workflow.getToken().token(wf, new RequestBuiltIns(request));
@@ -88,6 +100,7 @@ public class WorkflowController {
 			return new WorkflowInstance(workflow.getWorkflow(), new SerializedToken(t));
 		}
 		catch (Exception e) {
+			log.warn("signal error. wf={}, tvars={}, tid={}", workflow.getWorkflow(), workflow.getToken().getVars(), tokenId, e); //FIXME debug log
 			throw new RuntimeException(e);
 		}
 	}
